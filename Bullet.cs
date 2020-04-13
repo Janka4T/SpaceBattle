@@ -45,7 +45,7 @@ namespace SpaceBattle
         {
             this.BackColor = Color.White;
             this.Height = 10;
-            this.Width = 10;
+            this.Width = 6;
         }
     }
 }

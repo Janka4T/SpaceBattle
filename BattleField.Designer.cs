@@ -38,6 +38,7 @@
             this.Name = "Battlefield";
             this.Text = "Form1";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Battlefield_KeyDown);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Battlefield_KeyUp);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Battlefield_MouseDown);
             this.ResumeLayout(false);
 
