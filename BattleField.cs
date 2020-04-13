@@ -84,15 +84,15 @@ namespace SpaceBattle
 
         private void Battlefield_MouseDown(object sender, MouseEventArgs e)
         {
-            if(e.Button == MouseButtons.Left)
+            if (e.Button == MouseButtons.Left)
             {
                 FireBullet();
-            } 
+            }
         }
 
         private void Battlefield_KeyUp(object sender, KeyEventArgs e)
         {
-            if(e.KeyCode == Keys.Space)
+            if (e.KeyCode == Keys.Space)
             {
                 bulletFired = false;
             }
@@ -106,4 +106,5 @@ namespace SpaceBattle
 
             }
         }
+    }
 }
