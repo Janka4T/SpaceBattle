@@ -12,14 +12,16 @@ namespace SpaceBattle
 {
     public partial class Battlefield : Form
     {
-        bool moveLeft = false;
-        bool moveRight = false;
-        bool gameOver = false;
-        bool bulletFired = false;
+        private bool moveLeft = false;
+        private bool moveRight = false;
+        private bool moveUp = false;
+        private bool moveDown = false;
+        private bool gameOver = false;
+        private bool bulletFired = false;        
 
-        Spaceship spaceship = null;
-        Bullet bullet = null;
-        Timer mainTimer = null;
+        private Spaceship spaceship = null;
+        private Bullet bullet = null;
+        private Timer mainTimer = null;
 
         public Battlefield()
         {
@@ -33,8 +35,9 @@ namespace SpaceBattle
             this.BackColor = Color.Black;
             spaceship = new Spaceship();
             spaceship.Left = ClientRectangle.Width - (ClientRectangle.Width / 2 + spaceship.Width / 2);
-            spaceship.Top = 300;
+            spaceship.Top = ClientRectangle.Height - (spaceship.Height + 20);
             this.Controls.Add(spaceship);
+            Activate();
         }
         private void InitializeMainTimer()
         {
@@ -46,19 +49,34 @@ namespace SpaceBattle
 
         private void MainTimer_Tick(object sender, EventArgs e)
         {
-            if (moveLeft)
+            if (moveLeft && spaceship.Left > 0)
             {
                 spaceship.Left -= 2;
             }
-            if (moveRight)
+            if (moveRight && spaceship.Left + spaceship.Width < ClientRectangle.Width)
             {
                 spaceship.Left += 2;
+            }
+            if(moveDown && spaceship.Top + spaceship.Height < ClientRectangle.Height)
+            {
+                spaceship.Top += 2;
+            }
+            if(moveUp && spaceship.Top + spaceship.Height > 0)
+            {
+                spaceship.Top -= 2;
             }
         }
 
         private void FireBullet()
         {
-            bullet = new Bullet();
+            if(spaceship.EngineStatus == "off")
+            {
+                bullet = new Bullet(5);
+            }
+            else if (spaceship.EngineStatus == "on")
+            {
+                bullet = new Bullet(10);
+            }
             bullet.Top = spaceship.Top;
             bullet.Left = spaceship.Left + (spaceship.Width / 2 - bullet.Width / 2);
             this.Controls.Add(bullet);
@@ -79,6 +97,25 @@ namespace SpaceBattle
             else if (e.KeyCode == Keys.D || e.KeyCode == Keys.Right)
             {
                 moveRight = true;
+            }
+            else if (e.KeyCode == Keys.S || e.KeyCode == Keys.Down)
+            {
+                moveDown = true;
+            }
+            else if(e.KeyCode == Keys.W || e.KeyCode == Keys.Up)
+            {
+                moveUp = true;
+            }
+            else if(e.KeyCode == Keys.O)
+            {
+                if (spaceship.EngineStatus == "off")
+                {
+                    spaceship.EngineOn();
+                }
+                else if (spaceship.EngineStatus == "on")
+                {
+                    spaceship.EngineOff();
+                }                
             }
         }
 
@@ -104,6 +141,14 @@ namespace SpaceBattle
             {
                 moveRight = false;
 
+            }
+            else if (e.KeyCode == Keys.S || e.KeyCode == Keys.Down)
+            {
+                moveDown = false;
+            }
+            else if (e.KeyCode == Keys.W || e.KeyCode == Keys.Up)
+            {
+                moveUp = false;
             }
         }
     }
