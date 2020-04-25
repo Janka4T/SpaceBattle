@@ -9,35 +9,42 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SpaceBattle
-{
+{     
     public partial class Battlefield : Form
     {
         private bool moveLeft = false;
         private bool moveRight = false;
         private bool moveUp = false;
         private bool moveDown = false;
-        private bool gameOver = false;
-        private bool bulletFired = false;        
+        //private bool gameOver = false;
+        private bool bulletFired = false;
 
+        private Point point;
         private Spaceship spaceship = null;
-        private Bullet bullet = null;
+        //private Bullet bullet = null;
         private Timer mainTimer = null;
-
+        private Timer enemyTimer = null;
+        private Random rand = new Random();
+        
         public Battlefield()
         {
+            WindowState = FormWindowState.Maximized;
             InitializeComponent();
             InitializeBattleField();
             InitializeMainTimer();
+            InitializeEnemyTimer();
         }
 
         private void InitializeBattleField()
         {
+            if (WindowState == FormWindowState.Maximized)
+            {
             this.BackColor = Color.Black;
             spaceship = new Spaceship();
-            spaceship.Left = ClientRectangle.Width - (ClientRectangle.Width / 2 + spaceship.Width / 2);
-            spaceship.Top = ClientRectangle.Height - (spaceship.Height + 20);
+            spaceship.Left = ClientRectangle.Width + (ClientRectangle.Width / 2 + spaceship.Width / 2);
+            spaceship.Top = ClientRectangle.Height + (ClientRectangle.Y / 2 + spaceship.Height / 2);
             this.Controls.Add(spaceship);
-            Activate();
+            }                                               
         }
         private void InitializeMainTimer()
         {
@@ -61,33 +68,77 @@ namespace SpaceBattle
             {
                 spaceship.Top += 2;
             }
-            if(moveUp && spaceship.Top + spaceship.Height > 0)
+            if(moveUp && spaceship.Top > 0)
             {
                 spaceship.Top -= 2;
             }
+            EnemyBulletCollision();
+            EnemySpaceShipCollision();
         }
 
-        private void FireBullet()
+        private void InitializeEnemyTimer()
         {
-            if(spaceship.EngineStatus == "off")
+            enemyTimer = new Timer();
+            enemyTimer.Tick += new EventHandler(EnemyTimer_Tick);
+            enemyTimer.Interval = 2000;
+            enemyTimer.Start();
+        }
+
+        private void EnemyTimer_Tick(object sender, EventArgs e)
+        {
+            Enemy enemy = new Enemy(rand.Next(1, 6), this);
+            enemy.Left = rand.Next(20, this.ClientRectangle.Width - enemy.Width);
+            this.Controls.Add(enemy);
+        }
+
+        private void EnemyBulletCollision()
+        {
+            foreach(Control c in this.Controls)
             {
-                bullet = new Bullet(5);
+                if((string)c.Tag == "enemy")
+                {
+                    foreach(Control b in this.Controls)
+                    {
+                        if((string)b.Tag == "bullet")
+                        {
+                            if (c.Bounds.IntersectsWith(b.Bounds))
+                            {
+                                c.Dispose();
+                                b.Dispose();
+                            }
+                        }
+                    }
+                }
             }
-            else if (spaceship.EngineStatus == "on")
+        }
+
+        private void EnemySpaceShipCollision()
+        {
+            foreach(Control c  in this.Controls)
             {
-                bullet = new Bullet(10);
-            }
-            bullet.Top = spaceship.Top;
-            bullet.Left = spaceship.Left + (spaceship.Width / 2 - bullet.Width / 2);
-            this.Controls.Add(bullet);
-            bullet.BringToFront();
+                if((string)c.Tag == "enemy")
+                {
+                    if (c.Bounds.IntersectsWith(spaceship.Bounds))
+                    {
+                        c.Dispose();
+                        spaceship.Dispose();
+                        GameOver();
+                    }
+                }
+            }           
+        }
+
+        private void GameOver()
+        {
+            mainTimer.Stop();
+            MessageBox.Show("Game Over");
         }
 
         private void Battlefield_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Space && !bulletFired)
             {
-                FireBullet();
+                spaceship.Fire(this);
                 bulletFired = true;
             }
             else if (e.KeyCode == Keys.A || e.KeyCode == Keys.Left)
@@ -106,7 +157,7 @@ namespace SpaceBattle
             {
                 moveUp = true;
             }
-            else if(e.KeyCode == Keys.O)
+            else if(e.KeyCode == Keys.E)
             {
                 if (spaceship.EngineStatus == "off")
                 {
@@ -123,7 +174,7 @@ namespace SpaceBattle
         {
             if (e.Button == MouseButtons.Left)
             {
-                FireBullet();
+               spaceship.Fire(this);
             }
         }
 
@@ -150,6 +201,18 @@ namespace SpaceBattle
             {
                 moveUp = false;
             }
+        }
+
+        public void Battlefield_MouseMove(object sender, MouseEventArgs e)
+        {
+            double angle;
+            int x2; x2 = point.X;
+            int y2; y2 = point.Y;
+            int y1; y1 = spaceship.Location.Y;
+            int x1; x1 = spaceship.Location.X;
+            //point = this.PointToClient(Cursor.Position);
+            //angle = Math.Atan2(x1 - x2 , y1 - y2);
+            angle = Math.Pow(Math.Pow(x2 - x1, 2) + Math.Pow(y2 - y1, 2), 0.5);
         }
     }
 }

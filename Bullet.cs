@@ -11,11 +11,10 @@ namespace SpaceBattle
 {
     class Bullet : PictureBox
     {
+        private int bulletStep;
         private Timer timerBulletMove;
         int verVelocity = 0;
         int horVelocity = 0;
-        private int bulletStep;
-
         
         
         public Bullet(int speed)
@@ -49,6 +48,7 @@ namespace SpaceBattle
             this.BackColor = Color.White;
             this.Height = 10;
             this.Width = 6;
+            this.Tag = "bullet";
         }
     }
 }

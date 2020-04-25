@@ -34,12 +34,13 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(645, 479);
             this.Name = "Battlefield";
             this.Text = "Form1";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Battlefield_KeyDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Battlefield_KeyUp);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Battlefield_MouseDown);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Battlefield_MouseMove);
             this.ResumeLayout(false);
 
         }
